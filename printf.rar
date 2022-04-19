@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdarg.h>
+#include <stdlib.h>
+
+void v_printf(const char *fmr, va_list ap)
+{
+    //state 0 -  printing continues
+    //state 1- printing stops when identifier i.e % is encountered
+    int state = 0;
+    while (*fmr)
+    {
+        if (state == 0)
+            if (*fmr == '%')
+                state = 1;
+            else
+            {
+                putchar(*fmr);
+            }
+        else if (state == 1)
+        {
+            switch (*fmr)
+            {
+            case 'c':
+            {
+                char letter;
+                letter = va_arg(ap, int);
+                putchar(letter);
+                break;
+            }
+            case 's':
+            {
+                char *s = va_arg(ap, char *);
+                while (*s)
+                {
+                    putchar(*s++);
+                }
+                break;
+            }
+            case 'd':
+            /**{
+                char* n;
+                n = itoa(va_arg(ap, int), 10);
+                while(*n)
+                {
+                    putchar(*n++);
+                }
+                break;
+            }*/
+
+            case 'x':
+                break;
+            case 'p':
+            {
+                putchar('0');
+                putchar('x');
+                putchar('0');
+                break;
+            }
+            }
+            state = 0;
+        }
+        fmr++;
+    }
+}
+
+void _printf(const char *fmr, ...)
+{
+    va_list ap;
+    va_start(ap, fmr);
+    v_printf(fmr, ap);
+
+    va_end(ap);
+}
+
+int main()
+{
+
+    void *ptr_to_main = (void *)main;
+    _printf("This is character %c\n", 'B');
+    _printf("This is string %s\n", "Boluwatife");
+    _printf("This is integer %d\n", 100);
+    _printf("This is hex %x\n", 200);
+    _printf("This is octal %o\n", 100);
+    _printf("This is pointer to address %p\n  ", ptr_to_main);
+
+    return (0);
+}
